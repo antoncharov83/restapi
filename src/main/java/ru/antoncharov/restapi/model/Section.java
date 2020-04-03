@@ -32,7 +32,7 @@ public class Section {
         this.name = name;
     }
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "section_geological",
                 joinColumns = @JoinColumn(name="section_id"),
                 inverseJoinColumns = @JoinColumn(name = "geological_id"))
