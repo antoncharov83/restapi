@@ -62,7 +62,7 @@ public class FileStorage {
             if(filename == null){
                 return null;
             }
-            Path file = rootLocation.resolve(filename);
+            Path file = Paths.get(filename);
             Resource resource = new UrlResource(file.toUri());
             if(resource.exists() || resource.isReadable()) {
                 return resource;
