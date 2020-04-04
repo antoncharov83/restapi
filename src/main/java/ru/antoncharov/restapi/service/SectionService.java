@@ -1,5 +1,6 @@
 package ru.antoncharov.restapi.service;
 
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,6 +34,13 @@ public class SectionService {
     @Transactional(readOnly = true)
     public List<Section> getAll(){
         return repository.findAll();
+    }
+
+    @Transactional(readOnly = true)
+    public List<Section> getAllFullData(){
+//        List<Section> sections = repository.findAllFullData();
+//        sections.forEach(section -> section.getGeologicalClasses().size());
+        return repository.findAllFullData();
     }
 
     @Transactional

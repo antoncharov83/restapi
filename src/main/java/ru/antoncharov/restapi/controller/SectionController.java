@@ -25,13 +25,13 @@ public class SectionController {
                 .orElse(ResponseEntity.badRequest().build());
     }
 
-    @GetMapping(value = "/{id}")
+    @GetMapping(value = "/{id}", produces = "application/json")
     public ResponseEntity<Section> get(@PathVariable(name = "id") long id){
         return sectionService.get(id).map(u -> new ResponseEntity<>(u, HttpStatus.OK))
                 .orElse(new ResponseEntity<>(new Section(), HttpStatus.NOT_FOUND));
     }
 
-    @GetMapping
+    @GetMapping(produces = "application/json")
     public ResponseEntity<List<Section>> getAll(){
         List<Section> sections = sectionService.getAll();
         return new ResponseEntity<>(sections, HttpStatus.OK);
@@ -51,7 +51,7 @@ public class SectionController {
         return del_section;
     }
 
-    @GetMapping(value = "/by-code")
+    @GetMapping(value = "/by-code", produces = "application/json")
     public ResponseEntity<List<Section>> getByCode(@RequestParam(name = "code") String code){
         List<Section> found = sectionService.getAllByCode(code);
         return found.size() != 0 ?

@@ -47,7 +47,7 @@ public class FileStorage {
     public void generate(int generateJobId){
         try {
             jobInfoService.setStatus(generateJobId,"IN_PROGRESS");
-            List<Section> sections = sectionService.getAll();
+            List<Section> sections = sectionService.getAllFullData();
             String filepath = helper.generateXlsx(sections, generateJobId);
             jobInfoService.setFilepath(generateJobId, filepath);
             jobInfoService.setStatus(generateJobId,"DONE");

@@ -5,7 +5,6 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.PropertyTemplate;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import ru.antoncharov.restapi.model.GeologicalClass;
 import ru.antoncharov.restapi.model.Section;
 
@@ -148,7 +147,6 @@ public class XlsxHelper {
         return filename;
     }
 
-    @Transactional
     int getMaxLength(List<Section> sections){
         Comparator<Section> comparator = Comparator.comparingInt(s -> s.getGeologicalClasses().size());
         int maxSize = sections.stream().max(comparator).get().getGeologicalClasses().size();
