@@ -1,12 +1,11 @@
 package ru.antoncharov.restapi.storage;
 
 import lombok.RequiredArgsConstructor;
-import org.jobrunr.scheduling.JobScheduler;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import ru.antoncharov.restapi.model.Section;
 import ru.antoncharov.restapi.model.dto.SectionDto;
@@ -28,17 +27,8 @@ public class FileStorage {
     private final JobInfoService jobInfoService;
     private final XlsxHelper helper;
     private final SectionService sectionService;
-    private final JobScheduler jobScheduler;
 
-    public UUID store(MultipartFile file) {
-        UUID jobId = UUID.randomUUID();
-
-        jobInfoService.setStatus(jobId, JobState.IN_PROGRESS);
-        jobScheduler.enqueue(jobId, () -> this.loadFromFile(jobId, file.getOriginalFilename()));
-
-        return jobId;
-    }
-
+    @Async
     public void loadFromFile(UUID jobId, String filename) {
         try {
             Path path = rootLocation.resolve(filename);
@@ -56,14 +46,7 @@ public class FileStorage {
         }
     }
 
-    public UUID generate() {
-        UUID jobId = UUID.randomUUID();
-        jobInfoService.setStatus(jobId, JobState.IN_PROGRESS);
-        jobScheduler.enqueue(() -> this.generateFile(jobId));
-
-        return jobId;
-    }
-
+    @Async
     public void generateFile(UUID jobId) {
         try {
             List<Section> sections = sectionService.getAll();

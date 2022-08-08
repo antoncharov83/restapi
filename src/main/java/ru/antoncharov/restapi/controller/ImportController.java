@@ -1,6 +1,6 @@
 package ru.antoncharov.restapi.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 import ru.antoncharov.restapi.model.dto.JobDto;
 import ru.antoncharov.restapi.model.enums.JobState;
 import ru.antoncharov.restapi.service.JobInfoService;
+import ru.antoncharov.restapi.service.JobService;
 import ru.antoncharov.restapi.storage.FileStorage;
 
 import java.io.IOException;
@@ -23,17 +24,13 @@ import java.nio.file.StandardCopyOption;
 import java.util.UUID;
 
 @RestController
+@RequiredArgsConstructor
 public class ImportController {
     private final Path rootLocation = Paths.get("filestorage");
 
-    private FileStorage fileStorage;
-    private JobInfoService jobInfoService;
-
-    @Autowired
-    public ImportController(FileStorage fileStorage, JobInfoService jobInfoService) {
-        this.fileStorage = fileStorage;
-        this.jobInfoService = jobInfoService;
-    }
+    private final FileStorage fileStorage;
+    private final JobService jobService;
+    private final JobInfoService jobInfoService;
 
     @PostMapping(value = "/import")
     public JobDto importFile(@RequestParam("file") MultipartFile file){
@@ -43,7 +40,7 @@ public class ImportController {
         } catch (IOException e) {
             ResponseEntity.ok().body(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return new JobDto(fileStorage.store(file), JobState.IN_PROGRESS);
+        return new JobDto(jobService.store(file.getOriginalFilename()), JobState.IN_PROGRESS);
     }
 
     @GetMapping(value = {"/import/{id}", "/export/{id}"})
@@ -53,7 +50,7 @@ public class ImportController {
 
     @GetMapping(value = "/export")
     public JobDto exportFile(){
-        return new JobDto(fileStorage.generate(), JobState.IN_PROGRESS);
+        return new JobDto(jobService.generate(), JobState.IN_PROGRESS);
     }
 
     @GetMapping(value = "/export/{id}/file")
